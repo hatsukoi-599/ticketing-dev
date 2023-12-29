@@ -12,6 +12,6 @@ export const errorHandler = (
   }
 
   res.status(400).send({
-    errors: [{ mesaage: 'Unknown msg' }],
+    errors: [{ mesaage: err.message }],
   });
 };
