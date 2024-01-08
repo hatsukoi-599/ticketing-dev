@@ -7,11 +7,19 @@ build:
   local:
     push: false
   artifacts:
-    - image: ticketing-dev/auth
+    - image: hatsukoijiang/auth
       context: auth
       sync:
         manual:
           - src: src/**/*.ts
+            dest: .
+      docker:
+        dockerfile: Dockerfile
+    - image: hatsukoijiang/client
+      context: client
+      sync:
+        manual:
+          - src: '**/*.js'
             dest: .
       docker:
         dockerfile: Dockerfile
