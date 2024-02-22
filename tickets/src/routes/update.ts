@@ -5,6 +5,7 @@ import {
   NotFoundError,
   validateRequest,
   NotAuthorizedError,
+  BadRequestError,
 } from '@xjtickets/common';
 import { body } from 'express-validator';
 import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
@@ -23,10 +24,13 @@ router.put(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { title, price } = req.body;
     const ticket = await Ticket.findById(req.params.id);
     if (!ticket) {
       throw new NotFoundError();
+    }
+
+    if (ticket.orderId) {
+      throw new BadRequestError('Cannot edit a reserved ticket');
     }
 
     if (req.currentUser!.id !== ticket.userId) {
