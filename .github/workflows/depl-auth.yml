@@ -11,10 +11,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: cd auth && docker build -t hatsukoijiang/auth .
-      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t hatsukoijiang/auth ./auth
+
+      - name: Login to Docker Hub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker push hatsukoijiang/auth
+        run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+      - name: Push Docker image
+        run: docker push hatsukoijiang/auth
+
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN}}
+
+      - run: doctl kubernetes cluster kubeconfig save ticketing
+      - run: kubectl rollout restart deployment auth-depl
