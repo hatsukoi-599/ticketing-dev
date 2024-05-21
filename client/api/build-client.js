@@ -3,7 +3,7 @@ export default ({ req }) => {
   if (typeof window === 'undefined') {
     // We are on the server
     return axios.create({
-      baseURL: 'http://www.xxj-ticketing-app-prod.xyz',
+      baseURL: 'http://www.xxj-ticketing-app-prod.xyz/',
       headers: req.headers,
     });
   } else {
